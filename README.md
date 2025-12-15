@@ -1,1 +1,3 @@
-# COMP2001-MAL2018-CW2
+# MAL2018 Information Management Retrieval (COMP2001)
+
+## ID: BSCS2506052
