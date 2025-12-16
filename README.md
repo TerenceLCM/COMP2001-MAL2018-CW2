@@ -1,4 +1,4 @@
-# MAL2018 Information Management Retrieval (COMP2001)
+# MAL2018 Information Management Retrieval CW2 (COMP2001)
 
 **ID:** BSCS2506052  
 **Institution:** Peninsula College Georgetown  
