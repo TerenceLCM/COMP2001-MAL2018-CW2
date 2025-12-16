@@ -3,14 +3,19 @@ from app.database import get_connection
 from fastapi import Header, HTTPException
 from typing import Optional
 from fastapi import Body
+from fastapi import HTTPException
 
-app = FastAPI(title="TrailService API")
+app = FastAPI(
+    title="Trail Service API",
+    description="Micro-service for managing hiking trails",
+    version="1.0.0"
+)
 
-@app.get("/")
+@app.get("/", tags = ["System"])
 def root():
     return {"status": "TrailService running"}
 
-@app.get("/trails")
+@app.get("/trails", tags =["Trails"])
 def get_trails():
     conn = get_connection()
     cursor = conn.cursor()
@@ -43,7 +48,7 @@ def get_trails():
     conn.close()
     return trails
 
-@app.get("/trails/{trail_id}")
+@app.get("/trails/{trail_id}", tags =["Trails"])
 def get_trail_by_id(trail_id: int, x_user_id: Optional[int] = Header(None)):
     conn = get_connection()
     cursor = conn.cursor()
@@ -97,7 +102,7 @@ def get_trail_by_id(trail_id: int, x_user_id: Optional[int] = Header(None)):
 
     return trail
 
-@app.get("/trails/{trail_id}/points")
+@app.get("/trails/{trail_id}/points", tags =["Trail Points"])
 def get_trail_points(trail_id: int):
     conn = get_connection()
     cursor = conn.cursor()
@@ -125,7 +130,7 @@ def get_trail_points(trail_id: int):
     conn.close()
     return points
 
-@app.get("/trails/{trail_id}/features")
+@app.get("/trails/{trail_id}/features", tags =["Features"])
 def get_trail_features(trail_id: int):
     conn = get_connection()
     cursor = conn.cursor()
@@ -151,7 +156,7 @@ def get_trail_features(trail_id: int):
     conn.close()
     return features
 
-@app.post("/trails")
+@app.post("/trails", tags =["Trails"])
 def create_trail(
     trail: dict = Body(...),
     x_user_id: Optional[int] = Header(None)
@@ -193,3 +198,40 @@ def create_trail(
     conn.close()
 
     return {"message": "Trail created successfully"}
+
+@app.put("/trails/{trail_id}", tags =["Trails"])
+def update_trail(trail_id: int, data: dict):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE CW2.Trail
+        SET Trail_Name = ?, Distance = ?
+        WHERE Trail_ID = ?
+    """, data.get("trail_name"), data.get("distance"), trail_id)
+
+    if cursor.rowcount == 0:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Trail not found")
+
+    conn.commit()
+    conn.close()
+    return {"message": "Trail updated successfully"}
+
+@app.delete("/trails/{trail_id}", tags =["Trails"])
+def delete_trail(trail_id: int):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM CW2.Trail
+        WHERE Trail_ID = ?
+    """, trail_id)
+
+    if cursor.rowcount == 0:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Trail not found")
+
+    conn.commit()
+    conn.close()
+    return {"message": "Trail deleted successfully"}
