@@ -1,0 +1,235 @@
+openapi: 3.1.0
+info:
+  title: Trail Service API
+  description: Micro-service for managing hiking trails
+  version: 1.0.0
+paths:
+  /:
+    get:
+      tags:
+        - System
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /trails:
+    get:
+      tags:
+        - Trails
+      summary: Get Trails
+      operationId: get_trails_trails_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    post:
+      tags:
+        - Trails
+      summary: Create Trail
+      operationId: create_trail_trails_post
+      parameters:
+        - name: x-user-id
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: integer
+              - type: 'null'
+            title: X-User-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Trail
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/trails/{trail_id}':
+    get:
+      tags:
+        - Trails
+      summary: Get Trail By Id
+      operationId: get_trail_by_id_trails__trail_id__get
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Trail Id
+        - name: x-user-id
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: integer
+              - type: 'null'
+            title: X-User-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+        - Trails
+      summary: Update Trail
+      operationId: update_trail_trails__trail_id__put
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Trail Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Data
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+        - Trails
+      summary: Delete Trail
+      operationId: delete_trail_trails__trail_id__delete
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Trail Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/trails/{trail_id}/points':
+    get:
+      tags:
+        - Trail Points
+      summary: Get Trail Points
+      operationId: get_trail_points_trails__trail_id__points_get
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Trail Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/trails/{trail_id}/features':
+    get:
+      tags:
+        - Features
+      summary: Get Trail Features
+      operationId: get_trail_features_trails__trail_id__features_get
+      parameters:
+        - name: trail_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Trail Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
